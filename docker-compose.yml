@@ -1,0 +1,52 @@
+
+
+services:
+  backend:
+    build: ./Backend
+    container_name: backend
+    ports:
+      - "5043:5043"
+    environment:
+      - MongoDb__ConnectionString=mongodb://mongo:27017
+      - MongoDb__DatabaseName=URLShortenerDB
+      - Redis__ConnectionString=redis:6379
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - app_network
+
+  frontend:
+    build: ./url-shortener-frontend
+    container_name: frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app_network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+volumes:
+  mongo_data:
+
+networks:
+  app_network:
+    driver: bridge
