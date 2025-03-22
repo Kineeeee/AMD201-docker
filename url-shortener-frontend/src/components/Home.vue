@@ -5,7 +5,7 @@ import UrlList from '../components/UrlList.vue';
 
 <template>
   <div>
-    <h1>Rút Gọn URL</h1>
+    <h1>URL Shortener</h1>
     <UrlShortenerForm />
     <UrlList />
   </div>

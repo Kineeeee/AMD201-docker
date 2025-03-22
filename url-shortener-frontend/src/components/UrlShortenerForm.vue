@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5043'; // Cấu hình API backend
+const API_URL = 'http://localhost:5043';
 
 const originalUrl = ref('');
 const shortUrl = ref(null);
@@ -12,7 +12,6 @@ const successMessage = ref(null);
 const copied = ref(false);
 const isLoading = ref(false);
 
-// ✅ Lấy domain của hệ thống để kiểm tra URL rút gọn
 const baseUrl = 'http://localhost:5043';
 
 const isValidUrl = (url) => {
@@ -21,20 +20,18 @@ const isValidUrl = (url) => {
 };
 
 const isShortenedUrl = (url) => {
-  // Kiểm tra nếu URL bắt đầu với "http://localhost:5043/" và có chứa một shortUrl hợp lệ
   const regex = /^http:\/\/localhost:5043\/[a-zA-Z0-9_-]+$/;
   return regex.test(url);
 };
 
-
 const shortenUrl = async () => {
   if (!isValidUrl(originalUrl.value)) {
-    error.value = "❌ URL không hợp lệ! Vui lòng nhập đúng định dạng.";
+    error.value = "❌ Invalid URL! Please enter a valid format.";
     return;
   }
 
   if (isShortenedUrl(originalUrl.value)) {
-    error.value = "⚠ URL này đã được rút gọn trước đó!";
+    error.value = "⚠ This URL has already been shortened!";
     return;
   }
 
@@ -50,10 +47,10 @@ const shortenUrl = async () => {
 
     shortUrl.value = response.data.shortUrl;
     fullShortUrl.value = response.data.fullShortUrl;
-    successMessage.value = "✅ Rút gọn URL thành công!";
+    successMessage.value = "✅ URL shortened successfully!";
     originalUrl.value = "";
   } catch (err) {
-    error.value = err.response?.data?.message || "⚠ Không thể rút gọn URL!";
+    error.value = err.response?.data?.message || "⚠ Unable to shorten the URL!";
     console.error(err);
   } finally {
     isLoading.value = false;
@@ -67,40 +64,38 @@ const copyToClipboard = async () => {
       copied.value = true;
       setTimeout(() => copied.value = false, 2000);
     } catch (err) {
-      console.error("⚠ Lỗi sao chép URL:", err);
+      console.error("⚠ Error copying URL:", err);
     }
   }
 };
 
-// Computed để kiểm tra trạng thái nút
 const isButtonDisabled = computed(() => !originalUrl.value || isLoading.value);
 </script>
 
-
 <template>
   <div class="url-form">
-    <h2>Nhập URL để rút gọn</h2>
+    <h2>Enter a URL to shorten</h2>
 
     <div class="input-group">
       <input 
         v-model="originalUrl" 
-        placeholder="Nhập URL (bắt buộc có http/https)" 
+        placeholder="Enter URL (must start with http/https)" 
         @keyup.enter="shortenUrl"
         :disabled="isLoading"
       />
       <button @click="shortenUrl" :disabled="isButtonDisabled">
-        <span v-if="isLoading">⏳ Đang xử lý...</span>
-        <span v-else>Rút gọn</span>
+        <span v-if="isLoading">⏳ Processing...</span>
+        <span v-else>Shorten</span>
       </button>
     </div>
 
     <div v-if="fullShortUrl" class="result">
       <p>
-        URL rút gọn: 
+        Shortened URL: 
         <a :href="fullShortUrl" target="_blank">{{ fullShortUrl }}</a>
       </p>
-      <button @click="copyToClipboard">📋 Sao chép</button>
-      <span v-if="copied" class="copied-text">✔ Đã sao chép!</span>
+      <button @click="copyToClipboard">📋 Copy</button>
+      <span v-if="copied" class="copied-text">✔ Copied!</span>
     </div>
 
     <p v-if="error" class="error">{{ error }}</p>

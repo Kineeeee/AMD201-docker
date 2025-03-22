@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const urls = ref([]);
 const isLoading = ref(false);
-const baseUrl = "http://localhost:5043"; // Chỉnh theo backend của bạn
+const baseUrl = "http://localhost:5043"; // Update according to your backend
 
 const fetchUrls = async () => {
   isLoading.value = true;
@@ -15,44 +15,42 @@ const fetchUrls = async () => {
       fullShortUrl: `${baseUrl}/${url.shortUrl}`
     }));
   } catch (err) {
-    console.error("❌ Lỗi khi tải danh sách URL:", err);
+    console.error("❌ Error while fetching URL list:", err);
   } finally {
     isLoading.value = false;
   }
 };
 
-// Gọi API khi trang được tải
+// Fetch URLs when the page loads
 onMounted(fetchUrls);
 </script>
 
-
 <template>
   <div class="url-list">
-    <h2>Danh sách URL đã rút gọn</h2>
+    <h2>List of Shortened URLs</h2>
 
-    <!-- Nút Reload -->
+    <!-- Reload Button -->
     <button @click="fetchUrls" :disabled="isLoading">
-      <span v-if="isLoading">⏳ Đang tải...</span>
-      <span v-else>🔄 Tải lại danh sách</span>
+      <span v-if="isLoading">⏳ Loading...</span>
+      <span v-else>🔄 Refresh List</span>
     </button>
 
-    <!-- Hiển thị danh sách -->
+    <!-- Display list -->
     <ul v-if="urls.length">
       <li v-for="url in urls" :key="url.shortUrl">
-        <p><strong>🔗 URL gốc:</strong> 
+        <p><strong>🔗 Original URL:</strong> 
           <a :href="url.originalUrl" target="_blank">{{ url.originalUrl }}</a>
         </p>
-        <p><strong>🔗 URL rút gọn:</strong> 
+        <p><strong>🔗 Shortened URL:</strong> 
           <a :href="url.fullShortUrl" target="_blank">{{ url.fullShortUrl }}</a>
         </p>
       </li>
     </ul>
 
-    <!-- Nếu danh sách trống -->
-    <p v-else>📭 Không có URL nào được rút gọn.</p>
+    <!-- Empty state -->
+    <p v-else>📭 No shortened URLs found.</p>
   </div>
 </template>
-
 
 <style scoped>
 .url-list {

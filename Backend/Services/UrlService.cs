@@ -12,7 +12,7 @@ namespace URLShortener.Services
         private readonly IMongoCollection<UrlModel> _urls;
         private readonly IDatabase _cache;
         private const string Base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        private static readonly TimeSpan CACHE_DURATION = TimeSpan.FromDays(30);
+        private static readonly TimeSpan CACHE_DURATION = TimeSpan.FromHours(1);
 
         public UrlService(MongoDbContext dbContext, IDatabase cache)
         {
