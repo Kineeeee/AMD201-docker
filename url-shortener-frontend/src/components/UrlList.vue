@@ -21,6 +21,11 @@ const fetchUrls = async () => {
   }
 };
 
+// Truncate long URLs for display
+const truncateUrl = (url, maxLength = 50) => {
+  return url.length > maxLength ? url.slice(0, maxLength) + '...' : url;
+};
+
 // Fetch URLs when the page loads
 onMounted(fetchUrls);
 </script>
@@ -39,7 +44,14 @@ onMounted(fetchUrls);
     <ul v-if="urls.length">
       <li v-for="url in urls" :key="url.shortUrl">
         <p><strong>🔗 Original URL:</strong> 
-          <a :href="url.originalUrl" target="_blank">{{ url.originalUrl }}</a>
+          <a 
+            :href="url.originalUrl" 
+            target="_blank" 
+            :title="url.originalUrl" 
+            class="truncate-url"
+          >
+            {{ truncateUrl(url.originalUrl) }}
+          </a>
         </p>
         <p><strong>🔗 Shortened URL:</strong> 
           <a :href="url.fullShortUrl" target="_blank">{{ url.fullShortUrl }}</a>
@@ -114,5 +126,15 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* Truncate long URLs visually */
+.truncate-url {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
 }
 </style>
